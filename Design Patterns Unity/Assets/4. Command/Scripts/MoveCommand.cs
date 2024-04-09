@@ -17,12 +17,12 @@ namespace DesignPatterns.Command
 
         public void Execute()
         {
-            playerMovement?.
+            playerMovement?.AddMove(movement);
         }
 
         public void Undo()
         {
-
+            playerMovement?.RemovePos(-movement);
         }
     }
 }

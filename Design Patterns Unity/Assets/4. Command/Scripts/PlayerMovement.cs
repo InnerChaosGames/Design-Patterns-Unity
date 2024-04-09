@@ -2,62 +2,84 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+namespace DesignPatterns.Command
 {
-    [SerializeField]
-    private int sizeX;
-    [SerializeField]
-    private int sizeY;
-    [SerializeField]
-    private int moveSteps;
-    [SerializeField]
-    private PlayerPart playerPartPrefab;
-
-    private bool[,] board;
-    private Vector2Int currentPos;
-
-    private List<PlayerPart> playerParts;
-
-    private void Awake()
+    public class PlayerMovement : MonoBehaviour
     {
-        board = new bool[sizeX, sizeY];
-    }
+        [SerializeField]
+        private int sizeX;
+        [SerializeField]
+        private int sizeY;
+        [SerializeField]
+        private int moveSteps;
+        [SerializeField]
+        private PlayerPart playerPartPrefab;
 
-    public bool IsValidMove(Vector2Int pos)
-    {
-        
-        return board[pos.x, pos.y] == false && pos.x > 0 && pos.y > 0 
-            && pos.x < sizeX && pos.y < sizeY;
-    }
+        private bool[,] board;
+        private Vector2Int currentPos;
+        private Vector2Int lastPos;
 
-    public void AddMove(Vector2Int pos)
-    {
-        board[pos.x, pos.y] = true;
+        private List<PlayerPart> playerParts = new List<PlayerPart>();
 
-    }
+        public Vector2Int CurrentPosition { get => currentPos; }
 
-    public void RemovePos(Vector2Int pos)
-    {
-        board[pos.x, pos.y] = false;
-    }
-
-    private IEnumerator MovementAnim(Vector2 newPos)
-    {
-        Vector2 oldPos = transform.position;
-
-        float diffX = Mathf.Abs((newPos.x - transform.position.x) / moveSteps);
-        float diffY = Mathf.Abs((newPos.y - transform.position.y) / moveSteps);
-        
-        for (int i = 0; i < moveSteps; i++)
+        private void Awake()
         {
-            transform.position += new Vector3(diffX, diffY, 0);
-            yield return new WaitForSeconds(0.05f);
+            board = new bool[sizeX, sizeY];
         }
 
-        // create new body part
-        var newPart = Instantiate(playerPartPrefab, oldPos, Quaternion.identity);
-        newPart.transform.SetParent(transform);
+        public bool IsValidMove(Vector2Int pos)
+        {
+            Vector2Int newPos = currentPos + pos;
+            return board[newPos.x, newPos.y] == false && newPos.x >= 0 && newPos.y >= 0
+                && newPos.x < sizeX && newPos.y < sizeY;
+        }
 
-        playerParts.Add(newPart);
+        public void AddMove(Vector2Int move)
+        {
+            lastPos = currentPos;
+            currentPos += move;
+            board[currentPos.x, currentPos.y] = true;
+            StartCoroutine(MovementAnim(true));
+            print("oldPos: " + lastPos + " NewPos: " + currentPos);
+        }
+
+        public void RemovePos(Vector2Int move)
+        {
+            lastPos = currentPos;
+            currentPos += move;
+            board[lastPos.x, lastPos.y] = false;
+            StartCoroutine(MovementAnim(false));
+            print("oldPos: " + lastPos + " NewPos: " + currentPos);
+        }
+
+        private IEnumerator MovementAnim(bool add)
+        {
+            float diffX = (currentPos.x - transform.position.x) / moveSteps;
+            float diffY = (currentPos.y - transform.position.y) / moveSteps;
+
+            for (int i = 0; i < moveSteps; i++)
+            {
+                transform.position += new Vector3(diffX, diffY, 0);
+                yield return new WaitForSeconds(0.01f);
+            }
+
+            if (add)
+            {
+                // create new body part
+                var newPart = Instantiate(playerPartPrefab, new Vector3(lastPos.x, lastPos.y, 0), Quaternion.identity);
+                newPart.Position = lastPos;
+                //newPart.transform.SetParent(transform);
+                print(newPart.Position);
+                playerParts.Add(newPart);
+            }
+            else
+            {
+                print(currentPos);
+                var move = playerParts.Find(x => x.Position == currentPos);
+                playerParts.Remove(move);
+                Destroy(move.gameObject);
+            }
+        }
     }
 }

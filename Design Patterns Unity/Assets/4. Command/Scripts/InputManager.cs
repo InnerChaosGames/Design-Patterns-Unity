@@ -3,57 +3,78 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+namespace DesignPatterns.Command
 {
-    private PlayerMovement playerMovement;
-
-    private void Awake()
+    public class InputManager : MonoBehaviour
     {
-        playerMovement = GetComponent<PlayerMovement>();
-    }
+        private PlayerMovement playerMovement;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        [SerializeField]
+        private float inputDelay = 0.1f;
+
+        private float currentDelay = 0;
+
+        private void Awake()
         {
-
-        }
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-
-        }
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-
-        }
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-
-        }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-
-        }
-    }
-
-    private void RunPlayerCommand(Vector2Int position)
-    {
-        if (playerMovement == null)
-        {
-            return;
+            playerMovement = GetComponent<PlayerMovement>();
         }
 
-        if (playerMovement.IsValidMove(position))
+        private void Update()
         {
-            // issue the command and save to undo stack
-            ICommand command = new MoveCommand(playerMover, movement);
+            if (currentDelay < inputDelay)
+            {
+                currentDelay += Time.deltaTime;
+                return;
+            }
 
-            // we run the command immediately here, but you can also delay this for extra control over the timing
-            CommandInvoker.ExecuteCommand(command);
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                RunPlayerCommand(Vector2Int.up);
+                currentDelay = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                RunPlayerCommand(Vector2Int.down);
+                currentDelay = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                RunPlayerCommand(Vector2Int.left);
+                currentDelay = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                RunPlayerCommand(Vector2Int.right);
+                currentDelay = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                CommandInvoker.UndoCommand();
+                currentDelay = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                CommandInvoker.RedoCommand();
+                currentDelay = 0;
+            }
+        }
+
+        private void RunPlayerCommand(Vector2Int position)
+        {
+            if (playerMovement == null)
+            {
+                return;
+            }
+
+            if (playerMovement.IsValidMove(position))
+            {
+                // issue the command and save to undo stack
+                ICommand command = new MoveCommand(playerMovement, position);
+
+                print("Execute command");
+                // we run the command immediately here, but you can also delay this for extra control over the timing
+                CommandInvoker.ExecuteCommand(command);
+            }
         }
     }
 }
