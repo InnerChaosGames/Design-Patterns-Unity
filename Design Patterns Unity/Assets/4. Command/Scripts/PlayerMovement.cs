@@ -31,8 +31,8 @@ namespace DesignPatterns.Command
         public bool IsValidMove(Vector2Int pos)
         {
             Vector2Int newPos = currentPos + pos;
-            return board[newPos.x, newPos.y] == false && newPos.x >= 0 && newPos.y >= 0
-                && newPos.x < sizeX && newPos.y < sizeY;
+            return newPos.x >= 0 && newPos.y >= 0 && newPos.x < sizeX && newPos.y < sizeY
+                && board[newPos.x, newPos.y] == false;
         }
 
         public void AddMove(Vector2Int move)
