@@ -7,7 +7,7 @@ namespace DesignPatterns.ObjectPool
     public class ObjectPool : MonoBehaviour
     {
         // initial number of cloned objects
-        [SerializeField] private uint initPoolSize;
+        [SerializeField] private int initPoolSize;
         // PooledObject prefab
         [SerializeField] private PooledObject objectToPool;
 
@@ -29,8 +29,6 @@ namespace DesignPatterns.ObjectPool
             }
 
             stack = new Stack<PooledObject>();
-
-            // populate the pool
             PooledObject instance = null;
 
             for (int i = 0; i < initPoolSize; i++)

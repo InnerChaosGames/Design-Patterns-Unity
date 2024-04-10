@@ -15,8 +15,10 @@ namespace DesignPatterns.State
         private float groundedRadius = 0.5f;
 
         private float horizontal;
+        [SerializeField]
         private float speed = 8f;
-        private float jumpingPower = 16f;
+        [SerializeField]
+        private float jumpingPower = 6f;
 
         [SerializeField]
         private Rigidbody2D rb;
@@ -50,9 +52,9 @@ namespace DesignPatterns.State
 
             if (playerInput.IsJumping && isGrounded)
             {
+                print("Jump");
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
             }
-
         }
 
         private void LateUpdate()

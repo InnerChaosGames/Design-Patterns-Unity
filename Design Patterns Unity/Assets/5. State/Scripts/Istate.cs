@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DesignPatterns.State
 {
-    public interface IState
+    public interface IState : IStateColor
     {
         public void Enter()
         {

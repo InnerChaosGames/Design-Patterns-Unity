@@ -6,16 +6,16 @@ namespace DesignPatterns.State
 {
     public class WalkState : IState
     {
-        // color to change player (alternately: pass in with constructor)
-        private Color meshColor = Color.blue;
-        public Color MeshColor { get => meshColor; set => meshColor = value; }
+        private Color stateColor;
+        public Color StateColor { get => stateColor; set => stateColor = value; }
 
         private PlayerController player;
 
         // pass in any parameters you need in the constructors
-        public WalkState(PlayerController player)
+        public WalkState(PlayerController player, Color color)
         {
             this.player = player;
+            this.stateColor = color;
         }
 
         public void Enter()

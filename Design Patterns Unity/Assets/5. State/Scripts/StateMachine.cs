@@ -23,10 +23,10 @@ namespace DesignPatterns.State
         // pass in necessary parameters into constructor 
         public StateMachine(PlayerController player)
         {
-            // create an instance for each state and pass in PlayerController
-            this.walkState = new WalkState(player);
-            this.jumpState = new JumpState(player);
-            this.idleState = new IdleState(player);
+            // create an instance for each state and pass in PlayerController + other parameters
+            this.walkState = new WalkState(player, Color.red);
+            this.jumpState = new JumpState(player, Color.green);
+            this.idleState = new IdleState(player, Color.cyan);
         }
 
         // set the starting state

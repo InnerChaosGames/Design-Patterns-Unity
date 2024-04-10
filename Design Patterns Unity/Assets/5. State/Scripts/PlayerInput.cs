@@ -7,7 +7,7 @@ namespace DesignPatterns.State
     public class PlayerInput : MonoBehaviour
     {
         public float Horizontal => horizontal;
-        public bool IsJumping { get => IsJumping; set => IsJumping = value; }
+        public bool IsJumping { get => isJumping; set => isJumping = value; }
 
         private float horizontal;
         private bool isJumping;

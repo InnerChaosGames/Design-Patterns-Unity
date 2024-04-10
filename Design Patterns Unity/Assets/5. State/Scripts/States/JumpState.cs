@@ -8,14 +8,14 @@ namespace DesignPatterns.State
     {
         private PlayerController player;
 
-        // color to change player (alternately: pass in color value with constructor)
-        private Color meshColor = Color.red;
-        public Color MeshColor { get => meshColor; set => meshColor = value; }
+        private Color stateColor;
+        public Color StateColor { get => stateColor; set => stateColor = value; }
 
         // pass in any parameters you need in the constructors
-        public JumpState(PlayerController player)
+        public JumpState(PlayerController player, Color color)
         {
             this.player = player;
+            this.stateColor = color;
         }
 
         public void Enter()

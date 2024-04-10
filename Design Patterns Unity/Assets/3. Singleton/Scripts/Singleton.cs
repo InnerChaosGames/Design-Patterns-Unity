@@ -18,13 +18,6 @@ namespace DesignPatterns.Singleton
                     {
                         SetupInstance();
                     }
-                    else
-                    {
-                        string typeName = typeof(T).Name;
-
-                        Debug.Log("[Singleton] " + typeName + " instance already created: " +
-                            _instance.gameObject.name);
-                    }
                 }
 
                 return _instance;
